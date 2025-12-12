@@ -1,24 +1,21 @@
 const express = require('express');
 const router = express.Router();
-const JobCard = require('../models/JobCard');
-const auth = require('../middleware/auth'); // optional, keep simple for now
+const jobcardController = require('../controllers/jobcardController');
+const auth = require('../middleware/auth');
 
-// GET /api/jobcards
-router.get('/', auth, async (req, res) => {
-  try {
-    const list = await JobCard.find().populate('assignedTo', 'name email role');
-    res.json(list);
-  } catch(e){ console.error(e); res.status(500).json({ msg:'server error' }); }
-});
+// GET /api/jobcards - Get all job cards
+router.get('/', auth, jobcardController.getAllJobCards);
 
-// POST /api/jobcards
-router.post('/', auth, async (req, res) => {
-  try {
-    const { vehicle, reportedIssues, assignedTo } = req.body;
-    const jobNumber = `JC-${Date.now()}`;
-    const jc = await JobCard.create({ jobNumber, vehicle, reportedIssues, assignedTo });
-    res.json(jc);
-  } catch(e){ console.error(e); res.status(500).json({ msg:'server error' }); }
-});
+// GET /api/jobcards/:id - Get single job card
+router.get('/:id', auth, jobcardController.getJobCardById);
+
+// POST /api/jobcards - Create new job card
+router.post('/', auth, jobcardController.createJobCard);
+
+// PUT /api/jobcards/:id - Update job card
+router.put('/:id', auth, jobcardController.updateJobCard);
+
+// DELETE /api/jobcards/:id - Delete job card (manager only)
+router.delete('/:id', auth, jobcardController.deleteJobCard);
 
 module.exports = router;

@@ -4,7 +4,8 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 
 const authRoutes = require('./routes/auth');
-const jobRoutes  = require('./routes/jobcard');
+const jobRoutes = require('./routes/jobcard');
+const userRoutes = require('./routes/userRoutes');
 
 const app = express();
 app.use(cors());
@@ -16,6 +17,7 @@ console.log('MONGO_URI from .env:', !!process.env.MONGO_URI ? '[SET]' : '[NOT SE
 
 app.use('/api/auth', authRoutes);
 app.use('/api/jobcards', jobRoutes);
+app.use('/api/users', userRoutes);
 
 const PORT = process.env.PORT || 5000;
 const MONGO_URI = process.env.MONGO_URI;
@@ -26,5 +28,5 @@ if (!MONGO_URI) {
 }
 
 mongoose.connect(MONGO_URI)
-  .then(()=> app.listen(PORT, ()=> console.log('Server running on', PORT)))
+  .then(() => app.listen(PORT, () => console.log('Server running on', PORT)))
   .catch(err => { console.error('Mongo connect error', err); process.exit(1); });

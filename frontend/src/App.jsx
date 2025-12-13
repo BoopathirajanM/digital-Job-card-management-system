@@ -9,6 +9,8 @@ import Profile from "./pages/Profile";
 import Notifications from "./pages/Notifications";
 
 function App() {
+  console.log("API URL:", import.meta.env.VITE_API_URL);
+
   return (
     <BrowserRouter>
       <Routes>

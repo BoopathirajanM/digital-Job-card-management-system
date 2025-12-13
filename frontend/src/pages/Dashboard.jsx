@@ -53,28 +53,49 @@ export default function Dashboard() {
     {
       title: "Total Job Cards",
       value: stats.total,
-      icon: "",
+      icon: (
+        <svg className="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+          <rect x="3" y="5" width="14" height="16" rx="2" />
+          <path d="M7 3h10a2 2 0 0 1 2 2v14" />
+          <path d="M11 3h6a2 2 0 0 1 2 2v14" />
+        </svg>
+      ),
       gradient: "from-blue-500 to-cyan-500",
       bgGradient: "from-blue-50 to-cyan-50",
     },
     {
       title: "New",
       value: stats.new,
-      icon: "",
+      icon: (
+        <svg className="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+          <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+        </svg>
+      ),
       gradient: "from-slate-500 to-slate-600",
       bgGradient: "from-slate-50 to-slate-100",
     },
     {
       title: "In Progress",
       value: stats.inProgress,
-      icon: "",
+      icon: (
+        <svg className="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+          <circle cx="12" cy="12" r="10" />
+          <polyline points="12 6 12 12 16 14" />
+          <path d="M16 2 L20 6" strokeLinecap="round" />
+        </svg>
+      ),
       gradient: "from-amber-500 to-orange-500",
       bgGradient: "from-amber-50 to-orange-50",
     },
     {
       title: "Completed",
       value: stats.completed,
-      icon: "",
+      icon: (
+        <svg className="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+          <circle cx="12" cy="12" r="10" />
+          <polyline points="8 12 11 15 16 9" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+      ),
       gradient: "from-emerald-500 to-green-500",
       bgGradient: "from-emerald-50 to-green-50",
     },
@@ -84,7 +105,13 @@ export default function Dashboard() {
     {
       title: "Create Job Card",
       description: "Add a new service request",
-      icon: "",
+      icon: (
+        <svg className="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+          <rect x="3" y="3" width="14" height="18" rx="2" />
+          <line x1="10" y1="9" x2="10" y2="15" strokeLinecap="round" />
+          <line x1="7" y1="12" x2="13" y2="12" strokeLinecap="round" />
+        </svg>
+      ),
       link: "/jobcards/new",
       gradient: "from-blue-600 to-indigo-600",
       roles: ["admin", "manager", "service_advisor"],
@@ -92,7 +119,14 @@ export default function Dashboard() {
     {
       title: "View All Jobs",
       description: "Browse all job cards",
-      icon: "",
+      icon: (
+        <svg className="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+          <polyline points="14 2 14 8 20 8" />
+          <circle cx="12" cy="15" r="3" />
+          <path d="M12 12v3" />
+        </svg>
+      ),
       link: "/jobcards",
       gradient: "from-purple-600 to-violet-600",
       roles: ["admin", "manager", "service_advisor", "technician"],
@@ -100,7 +134,12 @@ export default function Dashboard() {
     {
       title: "My Profile",
       description: "Update your information",
-      icon: "",
+      icon: (
+        <svg className="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+          <circle cx="12" cy="7" r="4" />
+        </svg>
+      ),
       link: "/profile",
       gradient: "from-slate-600 to-slate-700",
       roles: ["admin", "manager", "service_advisor", "technician", "cashier"],
@@ -143,7 +182,7 @@ export default function Dashboard() {
               style={{ animationDelay: `${index * 100}ms` }}
             >
               <div className={`inline-flex p-3 rounded-xl bg-gradient-to-br ${stat.bgGradient} mb-4`}>
-                <span className="text-3xl">{stat.icon}</span>
+                <div className="text-blue-600">{stat.icon}</div>
               </div>
               <h3 className="text-sm font-medium text-slate-600 mb-1">
                 {stat.title}
@@ -167,7 +206,7 @@ export default function Dashboard() {
                 style={{ animationDelay: `${index * 100}ms` }}
               >
                 <div className={`inline-flex p-4 rounded-xl bg-gradient-to-r ${action.gradient} text-white mb-4 group-hover:scale-110 transition-transform duration-300`}>
-                  <span className="text-3xl">{action.icon}</span>
+                  {action.icon}
                 </div>
                 <h3 className="text-lg font-bold text-slate-800 mb-2">
                   {action.title}

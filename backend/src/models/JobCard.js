@@ -66,13 +66,12 @@ const jobCardSchema = new mongoose.Schema({
 }, { timestamps: true });
 
 // Auto-generate invoice number when status changes to 'done'
-jobCardSchema.pre('save', function (next) {
+jobCardSchema.pre('save', async function () {
   if (this.isModified('status') && this.status === 'done' && !this.invoiceNumber) {
     const timestamp = Date.now().toString().slice(-6);
     this.invoiceNumber = `INV-${timestamp}`;
     this.invoiceDate = new Date();
   }
-  next();
 });
 
 module.exports = mongoose.model('JobCard', jobCardSchema);

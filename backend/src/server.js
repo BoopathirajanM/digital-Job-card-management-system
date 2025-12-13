@@ -32,5 +32,8 @@ if (!MONGO_URI) {
 }
 
 mongoose.connect(MONGO_URI)
-  .then(() => app.listen(PORT, () => console.log('Server running on', PORT)))
+  .then(() => {
+    console.log('MongoDB connected successfully');
+    app.listen(PORT, () => console.log('Server running on', PORT));
+  })
   .catch(err => { console.error('Mongo connect error', err); process.exit(1); });

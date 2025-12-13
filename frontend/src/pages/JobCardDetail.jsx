@@ -67,7 +67,7 @@ export default function JobCardDetail() {
   }
 
   async function handleDelete() {
-    if (!confirm("Are you sure you want to delete this job card? This action cannot be undone.")) {
+    if (!window.confirm(`Are you sure you want to delete Job Card ${job.jobNumber}? This action cannot be undone.`)) {
       return;
     }
 
@@ -76,6 +76,7 @@ export default function JobCardDetail() {
       alert("Job card deleted successfully");
       navigate("/jobcards");
     } catch (error) {
+      console.error("Delete error:", error);
       alert("Unable to delete: " + (error.response?.data?.msg || error.message));
     }
   }

@@ -10,8 +10,10 @@ export default function Navbar() {
   const user = token ? jwtDecode(token) : null;
 
   function handleLogout() {
-    localStorage.removeItem("token");
-    navigate("/");
+    if (window.confirm("Are you sure you want to logout?")) {
+      localStorage.removeItem("token");
+      navigate("/");
+    }
   }
 
   // Role badge styling

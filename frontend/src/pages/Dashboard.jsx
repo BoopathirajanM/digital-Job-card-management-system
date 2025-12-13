@@ -60,8 +60,8 @@ export default function Dashboard() {
           <path d="M11 3h6a2 2 0 0 1 2 2v14" />
         </svg>
       ),
-      gradient: "from-blue-500 to-cyan-500",
-      bgGradient: "from-blue-50 to-cyan-50",
+      gradient: "from-[#1B5E7E] to-[#2E8BA6]",
+      bgGradient: "from-[#E8F1F5] to-[#D4E8F0]",
     },
     {
       title: "New",
@@ -71,7 +71,7 @@ export default function Dashboard() {
           <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
         </svg>
       ),
-      gradient: "from-slate-500 to-slate-600",
+      gradient: "from-[#0A2342] to-[#1B5E7E]",
       bgGradient: "from-slate-50 to-slate-100",
     },
     {
@@ -84,8 +84,8 @@ export default function Dashboard() {
           <path d="M16 2 L20 6" strokeLinecap="round" />
         </svg>
       ),
-      gradient: "from-amber-500 to-orange-500",
-      bgGradient: "from-amber-50 to-orange-50",
+      gradient: "from-[#F5A623] to-[#E89B0D]",
+      bgGradient: "from-orange-50 to-orange-100",
     },
     {
       title: "Completed",
@@ -113,7 +113,7 @@ export default function Dashboard() {
         </svg>
       ),
       link: "/jobcards/new",
-      gradient: "from-blue-600 to-indigo-600",
+      gradient: "from-[#1B5E7E] to-[#2E8BA6]",
       roles: ["admin", "manager", "service_advisor"],
     },
     {
@@ -128,7 +128,7 @@ export default function Dashboard() {
         </svg>
       ),
       link: "/jobcards",
-      gradient: "from-purple-600 to-violet-600",
+      gradient: "from-[#2E8BA6] to-[#1B5E7E]",
       roles: ["admin", "manager", "service_advisor", "technician"],
     },
     {
@@ -141,7 +141,7 @@ export default function Dashboard() {
         </svg>
       ),
       link: "/profile",
-      gradient: "from-slate-600 to-slate-700",
+      gradient: "from-[#0A2342] to-[#1B5E7E]",
       roles: ["admin", "manager", "service_advisor", "technician", "cashier"],
     },
   ];

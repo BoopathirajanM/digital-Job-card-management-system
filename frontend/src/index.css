@@ -10,7 +10,7 @@
 body {
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
     min-height: 100vh;
-    background: linear-gradient(to bottom right, rgb(248 250 252), rgb(239 246 255), rgb(238 242 255));
+    background: linear-gradient(to bottom right, #E8F1F5, #D4E8F0, #C5DDE8);
 }
 
 html {
@@ -42,7 +42,7 @@ html {
    ============================================ */
 .btn-primary {
     padding: 0.75rem 1.5rem;
-    background: linear-gradient(to right, rgb(37 99 235), rgb(79 70 229));
+    background: linear-gradient(to right, #1B5E7E, #2E8BA6);
     color: white;
     font-weight: 600;
     border-radius: 0.75rem;
@@ -51,14 +51,14 @@ html {
 }
 
 .btn-primary:hover {
-    background: linear-gradient(to right, rgb(29 78 216), rgb(67 56 202));
+    background: linear-gradient(to right, #0A2342, #1B5E7E);
     box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
     transform: translateY(-2px);
 }
 
 .btn-secondary {
     padding: 0.75rem 1.5rem;
-    background: linear-gradient(to right, rgb(71 85 105), rgb(51 65 85));
+    background: linear-gradient(to right, #0A2342, #1B5E7E);
     color: white;
     font-weight: 600;
     border-radius: 0.75rem;
@@ -67,7 +67,7 @@ html {
 }
 
 .btn-secondary:hover {
-    background: linear-gradient(to right, rgb(51 65 85), rgb(30 41 59));
+    background: linear-gradient(to right, #051729, #0A2342);
     box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
     transform: translateY(-2px);
 }
@@ -107,15 +107,15 @@ html {
 .btn-outline {
     padding: 0.75rem 1.5rem;
     background: transparent;
-    color: rgb(37 99 235);
+    color: #2E8BA6;
     font-weight: 600;
-    border: 2px solid rgb(37 99 235);
+    border: 2px solid #2E8BA6;
     border-radius: 0.75rem;
     transition: all 0.2s ease-out;
 }
 
 .btn-outline:hover {
-    background: rgb(37 99 235);
+    background: #2E8BA6;
     color: white;
 }
 
@@ -133,8 +133,8 @@ html {
 
 .input-field:focus {
     outline: none;
-    border-color: rgb(59 130 246);
-    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    border-color: #2E8BA6;
+    box-shadow: 0 0 0 3px rgba(46, 139, 166, 0.1);
 }
 
 .input-field-error {
@@ -170,12 +170,12 @@ html {
 }
 
 .badge-in-progress {
-    background: linear-gradient(to right, rgb(59 130 246), rgb(37 99 235));
+    background: linear-gradient(to right, #2E8BA6, #1B5E7E);
     color: white;
 }
 
 .badge-awaiting-parts {
-    background: linear-gradient(to right, rgb(245 158 11), rgb(217 119 6));
+    background: linear-gradient(to right, #F5A623, #E89B0D);
     color: white;
 }
 
@@ -281,7 +281,7 @@ html {
    TEXT GRADIENT
    ============================================ */
 .text-gradient {
-    background: linear-gradient(to right, rgb(59 130 246), rgb(147 51 234));
+    background: linear-gradient(to right, #1B5E7E, #2E8BA6);
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;

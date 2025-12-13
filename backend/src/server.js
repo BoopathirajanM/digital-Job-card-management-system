@@ -6,6 +6,7 @@ const cors = require('cors');
 const authRoutes = require('./routes/auth');
 const jobRoutes = require('./routes/jobcard');
 const userRoutes = require('./routes/userRoutes');
+const billingRoutes = require('./routes/billing');
 
 const app = express();
 app.use(cors());
@@ -17,6 +18,7 @@ console.log('MONGO_URI from .env:', !!process.env.MONGO_URI ? '[SET]' : '[NOT SE
 
 app.use('/api/auth', authRoutes);
 app.use('/api/jobcards', jobRoutes);
+app.use('/api/jobcards', billingRoutes);
 app.use('/api/users', userRoutes);
 
 const PORT = process.env.PORT || 5000;

@@ -1,7 +1,7 @@
 {
-  "name": "backend",
+  "name": "autoserve-backend",
   "version": "1.0.0",
-  "description": "",
+  "description": "AutoServe - Smart Vehicle Service Platform API",
   "main": "index.js",
   "scripts": {
     "start": "node src/server.js",

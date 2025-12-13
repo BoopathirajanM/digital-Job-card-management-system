@@ -10,7 +10,12 @@ const billingRoutes = require('./routes/billing');
 const notificationRoutes = require('./routes/notifications');
 
 const app = express();
-app.use(cors());
+app.use(
+  cors({
+    origin: "https://autoserve-frontend.onrender.com",
+    credentials: true,
+  })
+);
 app.use(express.json());
 
 // debug: show loaded env (remove later)

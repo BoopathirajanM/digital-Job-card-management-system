@@ -97,6 +97,11 @@ exports.updateJobCard = async (req, res) => {
             return res.status(404).json({ msg: 'Job card not found' });
         }
 
+        // Check if technician is being assigned (new or changed)
+        const previousTechnician = jobCard.assignedTo?.toString();
+        const newTechnician = assignedTo?.toString();
+        const technicianChanged = previousTechnician !== newTechnician && newTechnician;
+
         // Update fields if provided
         if (status) jobCard.status = status;
         if (assignedTo !== undefined) jobCard.assignedTo = assignedTo;
@@ -115,6 +120,18 @@ exports.updateJobCard = async (req, res) => {
         }
 
         await jobCard.save();
+
+        // Create notification if technician was assigned
+        if (technicianChanged) {
+            const { createNotification } = require('./notificationController');
+            await createNotification(
+                newTechnician,
+                'job_assigned',
+                'New Job Assigned',
+                `You have been assigned to Job Card ${jobCard.jobNumber}`,
+                jobCard._id
+            );
+        }
 
         // Populate and return updated job card
         const updatedJobCard = await JobCard.findById(id)

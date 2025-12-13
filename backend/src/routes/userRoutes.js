@@ -9,4 +9,7 @@ router.get('/profile', auth, userController.getProfile);
 // PUT /api/users/profile - Update user profile
 router.put('/profile', auth, userController.updateProfile);
 
+// GET /api/users/technicians - Get all technicians
+router.get('/technicians', auth, userController.getTechnicians);
+
 module.exports = router;

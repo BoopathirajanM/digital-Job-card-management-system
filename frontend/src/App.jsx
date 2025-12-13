@@ -6,6 +6,7 @@ import JobCardList from "./pages/JobCardList";
 import JobCardForm from "./pages/JobCardForm";
 import JobCardDetail from "./pages/JobCardDetail";
 import Profile from "./pages/Profile";
+import Notifications from "./pages/Notifications";
 
 function App() {
   return (
@@ -18,6 +19,7 @@ function App() {
         <Route path="/jobcards/new" element={<JobCardForm />} />
         <Route path="/jobcards/:id" element={<JobCardDetail />} />
         <Route path="/profile" element={<Profile />} />
+        <Route path="/notifications" element={<Notifications />} />
       </Routes>
     </BrowserRouter>
   );

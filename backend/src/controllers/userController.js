@@ -65,3 +65,40 @@ exports.getProfile = async (req, res) => {
         res.status(500).json({ msg: 'Server error fetching profile' });
     }
 };
+
+/**
+ * Get all technicians
+ * GET /api/users/technicians
+ */
+exports.getTechnicians = async (req, res) => {
+    try {
+        const JobCard = require('../models/JobCard');
+
+        // Find all users with role 'technician'
+        const technicians = await User.find({ role: 'technician' })
+            .select('name email')
+            .sort({ name: 1 });
+
+        // Get job count for each technician
+        const techniciansWithCount = await Promise.all(
+            technicians.map(async (tech) => {
+                const jobCount = await JobCard.countDocuments({
+                    assignedTo: tech._id,
+                    status: { $in: ['new', 'in_progress', 'awaiting_parts'] }
+                });
+
+                return {
+                    _id: tech._id,
+                    name: tech.name,
+                    email: tech.email,
+                    activeJobs: jobCount
+                };
+            })
+        );
+
+        res.json(techniciansWithCount);
+    } catch (error) {
+        console.error('Get technicians error:', error);
+        res.status(500).json({ msg: 'Server error fetching technicians' });
+    }
+};

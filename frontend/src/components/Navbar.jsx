@@ -1,19 +1,24 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 import logo from "../assets/logo-1.png";
+import ConfirmModal from "./ConfirmModal";
+import NotificationBell from "./NotificationBell";
 
 export default function Navbar() {
   const navigate = useNavigate();
   const location = useLocation();
   const token = localStorage.getItem("token");
   const user = token ? jwtDecode(token) : null;
+  const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
 
   function handleLogout() {
-    if (window.confirm("Are you sure you want to logout?")) {
-      localStorage.removeItem("token");
-      navigate("/");
-    }
+    setIsLogoutModalOpen(true);
+  }
+
+  function confirmLogout() {
+    localStorage.removeItem("token");
+    navigate("/");
   }
 
   // Role badge styling
@@ -93,6 +98,9 @@ export default function Navbar() {
               </span>
             </div>
 
+            {/* Notification Bell */}
+            <NotificationBell />
+
             <button
               onClick={handleLogout}
               className="px-4 py-2 bg-gradient-to-r from-red-500 to-rose-500 text-white font-medium rounded-lg shadow-md hover:shadow-lg hover:from-red-600 hover:to-rose-600 transform hover:-translate-y-0.5 transition-all duration-200"
@@ -133,6 +141,18 @@ export default function Navbar() {
           </Link>
         </div>
       </div>
+
+      {/* Logout Confirmation Modal */}
+      <ConfirmModal
+        isOpen={isLogoutModalOpen}
+        onClose={() => setIsLogoutModalOpen(false)}
+        onConfirm={confirmLogout}
+        title="Logout?"
+        message="Are you sure you want to logout? You will need to login again to access your account."
+        confirmText="Logout"
+        cancelText="Cancel"
+        type="warning"
+      />
     </nav>
   );
 }

@@ -7,6 +7,7 @@ const authRoutes = require('./routes/auth');
 const jobRoutes = require('./routes/jobcard');
 const userRoutes = require('./routes/userRoutes');
 const billingRoutes = require('./routes/billing');
+const notificationRoutes = require('./routes/notifications');
 
 const app = express();
 app.use(cors());
@@ -20,6 +21,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/jobcards', jobRoutes);
 app.use('/api/jobcards', billingRoutes);
 app.use('/api/users', userRoutes);
+app.use('/api/notifications', notificationRoutes);
 
 const PORT = process.env.PORT || 5000;
 const MONGO_URI = process.env.MONGO_URI;

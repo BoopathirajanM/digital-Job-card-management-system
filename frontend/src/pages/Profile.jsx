@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 import Layout from "../components/Layout";
 import RoleTag from "../components/RoleTag";
+import ConfirmModal from "../components/ConfirmModal";
 import api from "../lib/api";
 
 export default function Profile() {
@@ -21,6 +22,7 @@ export default function Profile() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [message, setMessage] = useState({ type: "", text: "" });
   const [loading, setLoading] = useState(false);
+  const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
 
   // Redirect if token missing
   useEffect(() => {
@@ -87,10 +89,12 @@ export default function Profile() {
   }
 
   function handleLogout() {
-    if (window.confirm("Are you sure you want to logout?")) {
-      localStorage.removeItem("token");
-      navigate("/");
-    }
+    setIsLogoutModalOpen(true);
+  }
+
+  function confirmLogout() {
+    localStorage.removeItem("token");
+    navigate("/");
   }
 
   return (
@@ -243,6 +247,18 @@ export default function Profile() {
           </div>
         </div>
       </div>
+
+      {/* Logout Confirmation Modal */}
+      <ConfirmModal
+        isOpen={isLogoutModalOpen}
+        onClose={() => setIsLogoutModalOpen(false)}
+        onConfirm={confirmLogout}
+        title="Logout?"
+        message="Are you sure you want to logout from your account?"
+        confirmText="Logout"
+        cancelText="Stay"
+        type="warning"
+      />
     </Layout>
   );
 }

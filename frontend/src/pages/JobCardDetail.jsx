@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 import Layout from "../components/Layout";
+import BillingModal from "../components/BillingModal";
+import ConfirmModal from "../components/ConfirmModal";
 import api from "../lib/api";
 
 export default function JobCardDetail() {
@@ -16,6 +18,9 @@ export default function JobCardDetail() {
   const [technician, setTechnician] = useState("");
   const [notes, setNotes] = useState("");
   const [updating, setUpdating] = useState(false);
+  const [isBillingModalOpen, setIsBillingModalOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [technicians, setTechnicians] = useState([]);
 
   const token = localStorage.getItem("token");
   const user = token ? jwtDecode(token) : null;
@@ -26,6 +31,7 @@ export default function JobCardDetail() {
       return;
     }
     fetchDetails();
+    fetchTechnicians();
   }, []);
 
   async function fetchDetails() {
@@ -40,6 +46,15 @@ export default function JobCardDetail() {
       console.error(error);
     } finally {
       setLoading(false);
+    }
+  }
+
+  async function fetchTechnicians() {
+    try {
+      const res = await api.get('/users/technicians');
+      setTechnicians(res.data);
+    } catch (error) {
+      console.error('Error fetching technicians:', error);
     }
   }
 
@@ -67,10 +82,10 @@ export default function JobCardDetail() {
   }
 
   async function handleDelete() {
-    if (!window.confirm(`Are you sure you want to delete Job Card ${job.jobNumber}? This action cannot be undone.`)) {
-      return;
-    }
+    setIsDeleteModalOpen(true);
+  }
 
+  async function confirmDelete() {
     try {
       await api.delete(`/jobcards/${id}`);
       alert("Job card deleted successfully");
@@ -242,23 +257,38 @@ export default function JobCardDetail() {
                     </select>
                   </div>
 
-                  <div>
-                    <label className="block text-sm font-semibold text-slate-700 mb-2">
-                      Assigned Technician
-                    </label>
-                    <input
-                      type="text"
-                      placeholder="Technician ID (optional)"
-                      className="input-field"
-                      value={technician}
-                      onChange={(e) => setTechnician(e.target.value)}
-                    />
-                    {job.assignedTo && (
-                      <p className="text-xs text-slate-500 mt-1">
-                        Current: {job.assignedTo.name || job.assignedTo.email}
-                      </p>
-                    )}
-                  </div>
+                  {/* Assigned Technician - Only for Admin, Manager, Service Advisor */}
+                  {["admin", "manager", "service_advisor"].includes(user?.role) && (
+                    <div>
+                      <label className="block text-sm font-semibold text-slate-700 mb-2">
+                        Assigned Technician
+                      </label>
+                      <select
+                        value={technician}
+                        onChange={(e) => setTechnician(e.target.value)}
+                        className="input-field"
+                      >
+                        <option value="">No technician assigned</option>
+                        {technicians.map((tech) => (
+                          <option key={tech._id} value={tech._id}>
+                            {tech.name} ({tech.email}) - {tech.activeJobs} active jobs
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  )}
+
+                  {/* Show assigned technician info for Technicians/Cashiers (read-only) */}
+                  {!["admin", "manager", "service_advisor"].includes(user?.role) && job.assignedTo && (
+                    <div>
+                      <label className="block text-sm font-semibold text-slate-700 mb-2">
+                        Assigned Technician
+                      </label>
+                      <div className="input-field bg-slate-100 cursor-not-allowed">
+                        {job.assignedTo.name} ({job.assignedTo.email})
+                      </div>
+                    </div>
+                  )}
 
                   <div>
                     <label className="block text-sm font-semibold text-slate-700 mb-2">
@@ -316,6 +346,17 @@ export default function JobCardDetail() {
                   </div>
                 )}
               </div>
+
+              {/* Billing Button - Only for Done/Closed jobs */}
+              {(job.status === "done" || job.status === "closed") &&
+                ["admin", "manager", "cashier", "service_advisor"].includes(user?.role) && (
+                  <button
+                    onClick={() => setIsBillingModalOpen(true)}
+                    className="w-full btn-primary mt-4"
+                  >
+                    💰 Manage Billing & Invoice
+                  </button>
+                )}
             </div>
 
             {/* Delete Button */}
@@ -329,6 +370,27 @@ export default function JobCardDetail() {
             )}
           </div>
         </div>
+
+        {/* Billing Modal */}
+        <BillingModal
+          jobCard={job}
+          isOpen={isBillingModalOpen}
+          onClose={() => setIsBillingModalOpen(false)}
+          onUpdate={fetchDetails}
+          userRole={user?.role}
+        />
+
+        {/* Delete Confirmation Modal */}
+        <ConfirmModal
+          isOpen={isDeleteModalOpen}
+          onClose={() => setIsDeleteModalOpen(false)}
+          onConfirm={confirmDelete}
+          title="Delete Job Card?"
+          message={`Are you sure you want to delete Job Card ${job?.jobNumber}? This action cannot be undone and all data will be permanently lost.`}
+          confirmText="Delete"
+          cancelText="Cancel"
+          type="danger"
+        />
       </div>
     </Layout>
   );

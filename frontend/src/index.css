@@ -104,6 +104,22 @@ html {
     transform: translateY(-2px);
 }
 
+.btn-success {
+    padding: 0.75rem 1.5rem;
+    background: linear-gradient(to right, rgb(34 197 94), rgb(22 163 74));
+    color: white;
+    font-weight: 600;
+    border-radius: 0.75rem;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    transition: all 0.2s ease-out;
+}
+
+.btn-success:hover {
+    background: linear-gradient(to right, rgb(22 163 74), rgb(21 128 61));
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+    transform: translateY(-2px);
+}
+
 .btn-outline {
     padding: 0.75rem 1.5rem;
     background: transparent;
@@ -415,4 +431,23 @@ html {
         padding: 0.625rem 1.25rem;
         font-size: 0.875rem;
     }
+}
+
+/* ============================================
+   MODAL ANIMATIONS
+   ============================================ */
+@keyframes scale-in {
+    from {
+        transform: scale(0.9);
+        opacity: 0;
+    }
+
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+.animate-scale-in {
+    animation: scale-in 0.3s ease-out;
 }

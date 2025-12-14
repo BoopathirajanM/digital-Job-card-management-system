@@ -73,9 +73,28 @@ MONGO_URI=mongodb://localhost:27017/autoserve
 JWT_SECRET=your_secret_key_here
 ```
 
+
 For MongoDB Atlas, use:
 ```env
 MONGO_URI=mongodb+srv://<USERNAME>:<PASSWORD>@<CLUSTER>.mongodb.net/autoserve
+```
+
+### Inventory Integration (Odoo)
+
+This system supports a **Hybrid Inventory Mode** that connects to an Odoo ERP for parts and stock data.
+
+- **Hybrid Mode**: Attempts to fetch data from Odoo first. If Odoo is unreachable or returns no results, it automatically falls back to local Mock Data.
+- **Mock Mode**: Uses local static data for testing (default if Odoo is not configured).
+
+To enable Hybrid Mode, add these lines to your `backend/.env`:
+
+```env
+# Odoo Configuration
+ODOO_URL=https://your-odoo-instance.odoo.com
+ODOO_DB=your_database_name
+ODOO_USERNAME=your_email@example.com
+ODOO_API_KEY=your_api_key
+INVENTORY_API_MODE=hybrid
 ```
 
 ---
@@ -129,9 +148,3 @@ For deployment instructions, see the deployment guide in the project documentati
 - Payment tracking
 - Role-based access control
 - Responsive design
-
----
-
-## License
-
-MIT License

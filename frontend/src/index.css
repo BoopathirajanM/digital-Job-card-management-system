@@ -205,6 +205,21 @@ html {
     color: white;
 }
 
+.badge-paid {
+    background: linear-gradient(to right, rgb(16 185 129), rgb(5 150 105));
+    color: white;
+}
+
+.badge-pending {
+    background: linear-gradient(to right, rgb(245 158 11), rgb(217 119 6));
+    color: white;
+}
+
+.badge-partial {
+    background: linear-gradient(to right, rgb(59 130 246), rgb(37 99 235));
+    color: white;
+}
+
 /* ============================================
    ROLE BADGES
    ============================================ */

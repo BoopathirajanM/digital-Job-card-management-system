@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import api from "../lib/api";
 import logo from "../assets/logo-1.png";
+import ConfirmModal from "../components/ConfirmModal";
 
 export default function Signup() {
   const [name, setName] = useState("");
@@ -13,6 +14,7 @@ export default function Signup() {
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
   const navigate = useNavigate();
 
   async function handleSubmit(e) {
@@ -34,14 +36,19 @@ export default function Signup() {
     setLoading(true);
     try {
       await api.post("/auth/register", { name, email, password, role });
-      // Show success and redirect to login
-      navigate("/", { state: { message: "Account created! Please sign in." } });
+      // Show success modal
+      setShowSuccessModal(true);
     } catch (error) {
       setErr(error.response?.data?.msg || error.message || "Signup failed");
     } finally {
       setLoading(false);
     }
   }
+
+  const handleSuccessConfirm = () => {
+    setShowSuccessModal(false);
+    navigate("/");
+  };
 
   const roles = [
     { value: "service_advisor", label: "Service Advisor", icon: "" },
@@ -246,6 +253,18 @@ export default function Signup() {
           © 2025 AutoServe. All rights reserved.
         </p>
       </div>
+
+      {/* Success Modal */}
+      <ConfirmModal
+        isOpen={showSuccessModal}
+        onClose={handleSuccessConfirm}
+        onConfirm={handleSuccessConfirm}
+        title="Welcome to AutoServe!"
+        message="Your account has been successfully created. You can now sign in to access your dashboard."
+        confirmText="Sign In Now"
+        type="success"
+        showCancel={false}
+      />
     </div>
   );
 }

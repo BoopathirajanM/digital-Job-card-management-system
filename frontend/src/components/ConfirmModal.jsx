@@ -8,7 +8,8 @@ export default function ConfirmModal({
     message,
     confirmText = "Confirm",
     cancelText = "Cancel",
-    type = "warning" // warning, danger, success, info
+    type = "warning", // warning, danger, success, info
+    showCancel = true
 }) {
     // Close on Escape key
     useEffect(() => {
@@ -101,12 +102,14 @@ export default function ConfirmModal({
 
                 {/* Actions */}
                 <div className="bg-slate-50 px-6 py-4 rounded-b-2xl flex gap-3">
-                    <button
-                        onClick={onClose}
-                        className="flex-1 px-6 py-3 bg-white border-2 border-slate-300 text-slate-700 font-semibold rounded-lg hover:bg-slate-100 transition-all"
-                    >
-                        {cancelText}
-                    </button>
+                    {showCancel && (
+                        <button
+                            onClick={onClose}
+                            className="flex-1 px-6 py-3 bg-white border-2 border-slate-300 text-slate-700 font-semibold rounded-lg hover:bg-slate-100 transition-all"
+                        >
+                            {cancelText}
+                        </button>
+                    )}
                     <button
                         onClick={() => {
                             onConfirm();

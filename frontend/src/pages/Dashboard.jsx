@@ -239,6 +239,7 @@ export default function Dashboard() {
                       <th className="table-cell font-semibold text-left">Customer</th>
                       <th className="table-cell font-semibold text-left">Vehicle</th>
                       <th className="table-cell font-semibold text-left">Status</th>
+                      <th className="table-cell font-semibold text-left">Payment</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -258,6 +259,11 @@ export default function Dashboard() {
                         <td className="table-cell">
                           <span className={`badge badge-${job.status.replace("_", "-")}`}>
                             {job.status.replace("_", " ").toUpperCase()}
+                          </span>
+                        </td>
+                        <td className="table-cell">
+                          <span className={`badge badge-${(job.paymentStatus || "pending").toLowerCase()}`}>
+                            {(job.paymentStatus || "pending").toUpperCase()}
                           </span>
                         </td>
                       </tr>

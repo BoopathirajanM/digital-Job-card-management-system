@@ -10,15 +10,26 @@ class InventoryService {
         console.log('Inventory Service Mode:', this.mode);
     }
 
+    // Helper to check if we should try Odoo
+    shouldTryOdoo() {
+        return this.mode === 'odoo' || this.mode === 'hybrid';
+    }
+
     // Search for parts
     async searchParts(query) {
         try {
-            if (this.mode === 'odoo') {
-                const results = await odooInventoryAPI.searchProducts(query);
-                if (results && results.length > 0) {
-                    return results;
+            if (this.shouldTryOdoo()) {
+                console.log(`[Hybrid] Searching Odoo for: ${query}`);
+                try {
+                    const results = await odooInventoryAPI.searchProducts(query);
+                    if (results && results.length > 0) {
+                        console.log(`[Hybrid] Found ${results.length} items in Odoo`);
+                        return results;
+                    }
+                    console.log('[Hybrid] Odoo returned no results, checking fallback...');
+                } catch (odooError) {
+                    console.warn('[Hybrid] Odoo API failed, falling back to mock:', odooError.message);
                 }
-                console.log('Odoo returned no results, using mock fallback');
             }
             return mockInventoryAPI.searchParts(query);
         } catch (error) {
@@ -30,10 +41,12 @@ class InventoryService {
     // Get part details
     async getPartDetails(partNumber) {
         try {
-            if (this.mode === 'odoo') {
-                const result = await odooInventoryAPI.getProductByPartNumber(partNumber);
-                if (result) {
-                    return result;
+            if (this.shouldTryOdoo()) {
+                try {
+                    const result = await odooInventoryAPI.getProductByPartNumber(partNumber);
+                    if (result) return result;
+                } catch (odooError) {
+                    console.warn('[Hybrid] Odoo API failed, falling back to mock:', odooError.message);
                 }
             }
             return mockInventoryAPI.getPartDetails(partNumber);
@@ -46,17 +59,21 @@ class InventoryService {
     // Check stock availability
     async checkStock(partNumber) {
         try {
-            if (this.mode === 'odoo') {
-                const product = await odooInventoryAPI.getProductByPartNumber(partNumber);
-                if (product) {
-                    return {
-                        partNumber: product.partNumber,
-                        name: product.name,
-                        stock: product.stock,
-                        available: product.stock > 0,
-                        status: product.stock > 10 ? 'In Stock' :
-                            product.stock > 0 ? 'Low Stock' : 'Out of Stock'
-                    };
+            if (this.shouldTryOdoo()) {
+                try {
+                    const product = await odooInventoryAPI.getProductByPartNumber(partNumber);
+                    if (product) {
+                        return {
+                            partNumber: product.partNumber,
+                            name: product.name,
+                            stock: product.stock,
+                            available: product.stock > 0,
+                            status: product.stock > 10 ? 'In Stock' :
+                                product.stock > 0 ? 'Low Stock' : 'Out of Stock'
+                        };
+                    }
+                } catch (odooError) {
+                    console.warn('[Hybrid] Odoo API failed, falling back to mock:', odooError.message);
                 }
             }
             return mockInventoryAPI.checkStock(partNumber);
@@ -69,16 +86,20 @@ class InventoryService {
     // Get current price
     async getPrice(partNumber) {
         try {
-            if (this.mode === 'odoo') {
-                const product = await odooInventoryAPI.getProductByPartNumber(partNumber);
-                if (product) {
-                    return {
-                        partNumber: product.partNumber,
-                        name: product.name,
-                        price: product.price,
-                        unit: product.unit,
-                        lastUpdated: new Date().toISOString()
-                    };
+            if (this.shouldTryOdoo()) {
+                try {
+                    const product = await odooInventoryAPI.getProductByPartNumber(partNumber);
+                    if (product) {
+                        return {
+                            partNumber: product.partNumber,
+                            name: product.name,
+                            price: product.price,
+                            unit: product.unit,
+                            lastUpdated: new Date().toISOString()
+                        };
+                    }
+                } catch (odooError) {
+                    console.warn('[Hybrid] Odoo API failed, falling back to mock:', odooError.message);
                 }
             }
             return mockInventoryAPI.getPrice(partNumber);
@@ -91,10 +112,12 @@ class InventoryService {
     // Get all categories
     async getCategories() {
         try {
-            if (this.mode === 'odoo') {
-                const categories = await odooInventoryAPI.getCategories();
-                if (categories && categories.length > 0) {
-                    return categories;
+            if (this.shouldTryOdoo()) {
+                try {
+                    const categories = await odooInventoryAPI.getCategories();
+                    if (categories && categories.length > 0) return categories;
+                } catch (odooError) {
+                    console.warn('[Hybrid] Odoo API failed, falling back to mock:', odooError.message);
                 }
             }
             return mockInventoryAPI.getCategories();
@@ -107,9 +130,9 @@ class InventoryService {
     // Get parts by category
     async getPartsByCategory(category) {
         try {
-            if (this.mode === 'odoo') {
-                // Odoo doesn't have direct category search in this implementation
-                return mockInventoryAPI.getPartsByCategory(category);
+            if (this.shouldTryOdoo()) {
+                // Odoo doesn't support category search yet, fallback immediately
+                // or implement if Odoo API supports it later
             }
             return mockInventoryAPI.getPartsByCategory(category);
         } catch (error) {

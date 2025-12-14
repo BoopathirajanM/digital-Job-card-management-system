@@ -4,11 +4,13 @@ import { jwtDecode } from "jwt-decode";
 import Layout from "../components/Layout";
 import BillingModal from "../components/BillingModal";
 import ConfirmModal from "../components/ConfirmModal";
+import { useToast } from "../components/ToastProvider";
 import api from "../lib/api";
 
 export default function JobCardDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { showToast } = useToast();
 
   const [job, setJob] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -70,12 +72,12 @@ export default function JobCardDetail() {
       await api.put(`/jobcards/${id}`, payload);
 
       // Show success message
-      alert("Job card updated successfully!");
+      showToast("Job card updated successfully!", "success");
 
       // Refresh data
       fetchDetails();
     } catch (error) {
-      alert("Update failed: " + (error.response?.data?.msg || error.message));
+      showToast("Update failed: " + (error.response?.data?.msg || error.message), "error");
     } finally {
       setUpdating(false);
     }
@@ -88,11 +90,11 @@ export default function JobCardDetail() {
   async function confirmDelete() {
     try {
       await api.delete(`/jobcards/${id}`);
-      alert("Job card deleted successfully");
+      showToast("Job card deleted successfully", "success");
       navigate("/jobcards");
     } catch (error) {
       console.error("Delete error:", error);
-      alert("Unable to delete: " + (error.response?.data?.msg || error.message));
+      showToast("Unable to delete: " + (error.response?.data?.msg || error.message), "error");
     }
   }
 

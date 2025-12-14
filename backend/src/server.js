@@ -8,11 +8,12 @@ const jobRoutes = require('./routes/jobcard');
 const userRoutes = require('./routes/userRoutes');
 const billingRoutes = require('./routes/billing');
 const notificationRoutes = require('./routes/notifications');
+const inventoryRoutes = require('./routes/inventoryRoutes');
 
 const app = express();
 app.use(
   cors({
-    origin: "https://autoserve-frontend.onrender.com",
+    origin: ["http://localhost:5173", "https://autoserve-frontend.onrender.com"],
     credentials: true,
   })
 );
@@ -27,6 +28,7 @@ app.use('/api/jobcards', jobRoutes);
 app.use('/api/jobcards', billingRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/notifications', notificationRoutes);
+app.use('/api/inventory', inventoryRoutes);
 
 const PORT = process.env.PORT || 5000;
 const MONGO_URI = process.env.MONGO_URI;

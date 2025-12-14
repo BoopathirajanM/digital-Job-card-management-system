@@ -25,6 +25,7 @@ const billingSchema = new mongoose.Schema({
 const jobCardSchema = new mongoose.Schema({
   jobNumber: String,
   vehicle: {
+    type: { type: String, enum: ['Car', 'Bike'], required: true },
     regNo: String,
     model: String,
     ownerName: String,

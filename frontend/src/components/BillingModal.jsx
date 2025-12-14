@@ -1,12 +1,18 @@
 import React, { useState, useEffect } from "react";
 import api from "../lib/api";
+import inventoryService from "../services/inventoryService";
+import { useToast } from "./ToastProvider";
 
 export default function BillingModal({ jobCard, isOpen, onClose, onUpdate, userRole }) {
+    const { showToast } = useToast();
     const [spareParts, setSpareParts] = useState([]);
     const [serviceCosts, setServiceCosts] = useState([]);
     const [discount, setDiscount] = useState(0);
     const [discountType, setDiscountType] = useState("fixed");
     const [saving, setSaving] = useState(false);
+    const [searchSuggestions, setSearchSuggestions] = useState([]);
+    const [activeSearchIndex, setActiveSearchIndex] = useState(-1);
+    const [searchQuery, setSearchQuery] = useState("");
 
     // Check if user can edit billing
     const canEditBilling = ["admin", "manager", "cashier", "service_advisor"].includes(userRole);
@@ -54,6 +60,37 @@ export default function BillingModal({ jobCard, isOpen, onClose, onUpdate, userR
         }
 
         setSpareParts(updated);
+    };
+
+    // Search parts from inventory
+    const handlePartSearch = async (query, index) => {
+        setSearchQuery(query);
+        setActiveSearchIndex(index);
+
+        if (query.length < 2) {
+            setSearchSuggestions([]);
+            return;
+        }
+
+        const results = await inventoryService.searchParts(query);
+        setSearchSuggestions(results);
+    };
+
+    // Select part from suggestions
+    const selectPart = (part, index) => {
+        const updated = [...spareParts];
+        updated[index] = {
+            name: part.name,
+            partNumber: part.partNumber,
+            quantity: updated[index].quantity || 1,
+            unitPrice: part.price,
+            total: (updated[index].quantity || 1) * part.price,
+            stock: part.stock,
+            category: part.category
+        };
+        setSpareParts(updated);
+        setSearchSuggestions([]);
+        setActiveSearchIndex(-1);
     };
 
     // Remove spare part
@@ -113,10 +150,11 @@ export default function BillingModal({ jobCard, isOpen, onClose, onUpdate, userR
             });
 
             alert("Billing saved successfully!");
+            showToast("Billing saved successfully!", "success");
             onUpdate();
             onClose();
         } catch (error) {
-            alert("Failed to save billing: " + (error.response?.data?.msg || error.message));
+            showToast("Failed to save billing: " + (error.response?.data?.msg || error.message), "error");
         } finally {
             setSaving(false);
         }
@@ -130,9 +168,10 @@ export default function BillingModal({ jobCard, isOpen, onClose, onUpdate, userR
             });
 
             alert("Payment status updated!");
+            showToast("Payment status updated!", "success");
             onUpdate();
         } catch (error) {
-            alert("Failed to update payment status: " + (error.response?.data?.msg || error.message));
+            showToast("Failed to update payment status: " + (error.response?.data?.msg || error.message), "error");
         }
     };
 
@@ -181,14 +220,69 @@ export default function BillingModal({ jobCard, isOpen, onClose, onUpdate, userR
                                         <div className="grid grid-cols-12 gap-3 items-end">
                                             <div className="col-span-4">
                                                 <label className="text-xs font-semibold text-slate-600 mb-1 block">Part Name *</label>
-                                                <input
-                                                    type="text"
-                                                    value={part.name}
-                                                    onChange={(e) => updateSparePart(index, "name", e.target.value)}
-                                                    className="input-field"
-                                                    disabled={!canEditBilling}
-                                                    placeholder="Enter part name"
-                                                />
+                                                <div className="relative">
+                                                    <input
+                                                        type="text"
+                                                        value={part.name}
+                                                        onChange={(e) => {
+                                                            updateSparePart(index, "name", e.target.value);
+                                                            handlePartSearch(e.target.value, index);
+                                                        }}
+                                                        onFocus={() => {
+                                                            if (part.name.length >= 2) {
+                                                                handlePartSearch(part.name, index);
+                                                            }
+                                                        }}
+                                                        onBlur={() => {
+                                                            // Delay to allow click on suggestion
+                                                            setTimeout(() => setSearchSuggestions([]), 200);
+                                                        }}
+                                                        className="input-field"
+                                                        disabled={!canEditBilling}
+                                                        placeholder="Search parts..."
+                                                    />
+                                                    {/* Autocomplete Suggestions */}
+                                                    {canEditBilling && activeSearchIndex === index && searchSuggestions.length > 0 && (
+                                                        <div className="absolute z-10 w-full mt-1 bg-white border border-slate-300 rounded-lg shadow-lg max-h-60 overflow-y-auto">
+                                                            {searchSuggestions.map((suggestion, idx) => (
+                                                                <div
+                                                                    key={idx}
+                                                                    onClick={() => selectPart(suggestion, index)}
+                                                                    className="p-3 hover:bg-blue-50 cursor-pointer border-b border-slate-100 last:border-b-0"
+                                                                >
+                                                                    <div className="flex justify-between items-start">
+                                                                        <div className="flex-1">
+                                                                            <p className="font-semibold text-slate-900">{suggestion.name}</p>
+                                                                            <p className="text-xs text-slate-500">{suggestion.partNumber} • {suggestion.category}</p>
+                                                                        </div>
+                                                                        <div className="text-right ml-3">
+                                                                            <p className="font-bold text-blue-600">₹{suggestion.price}</p>
+                                                                            <p className={`text-xs ${suggestion.stock > 10 ? 'text-green-600' :
+                                                                                suggestion.stock > 0 ? 'text-orange-600' :
+                                                                                    'text-red-600'
+                                                                                }`}>
+                                                                                {suggestion.stock > 10 ? '✓ In Stock' :
+                                                                                    suggestion.stock > 0 ? `⚠ ${suggestion.stock} left` :
+                                                                                        '✗ Out of Stock'}
+                                                                            </p>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            ))}
+                                                        </div>
+                                                    )}
+                                                </div>
+                                                {/* Stock Indicator */}
+                                                {part.stock !== undefined && (
+                                                    <p className={`text-xs mt-1 ${part.stock > 10 ? 'text-green-600' :
+                                                        part.stock > 0 ? 'text-orange-600' :
+                                                            'text-red-600'
+                                                        }`}>
+                                                        {part.stock > 10 ? `✓ ${part.stock} in stock` :
+                                                            part.stock > 0 ? `⚠ Only ${part.stock} left` :
+                                                                '✗ Out of stock'}
+                                                    </p>
+                                                )}
                                             </div>
                                             <div className="col-span-2">
                                                 <label className="text-xs font-semibold text-slate-600 mb-1 block">Part Number</label>
@@ -385,8 +479,8 @@ export default function BillingModal({ jobCard, isOpen, onClose, onUpdate, userR
                                 <div>
                                     <p className="text-sm text-slate-600">Payment Status</p>
                                     <span className={`inline-block px-3 py-1 rounded-full text-sm font-bold ${jobCard.paymentStatus === "paid" ? "bg-green-500 text-white" :
-                                            jobCard.paymentStatus === "partial" ? "bg-orange-500 text-white" :
-                                                "bg-slate-400 text-white"
+                                        jobCard.paymentStatus === "partial" ? "bg-orange-500 text-white" :
+                                            "bg-slate-400 text-white"
                                         }`}>
                                         {jobCard.paymentStatus?.toUpperCase()}
                                     </span>

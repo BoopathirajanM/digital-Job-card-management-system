@@ -14,12 +14,15 @@ export default function JobCardForm() {
   }
 
   const [form, setForm] = useState({
+    vehicleType: "Car",
     regNo: "",
     model: "",
     ownerName: "",
     contact: "",
     kmReading: "",
     issues: "",
+    commonIssues: [],
+    customIssue: "",
   });
 
   const [loading, setLoading] = useState(false);
@@ -29,24 +32,49 @@ export default function JobCardForm() {
     setForm({ ...form, [e.target.name]: e.target.value });
   }
 
+  function handleCheckboxChange(issue) {
+    const isChecked = form.commonIssues.includes(issue);
+    if (isChecked) {
+      setForm({
+        ...form,
+        commonIssues: form.commonIssues.filter((i) => i !== issue),
+      });
+    } else {
+      setForm({
+        ...form,
+        commonIssues: [...form.commonIssues, issue],
+      });
+    }
+  }
+
   async function handleSubmit(e) {
     e.preventDefault();
     setLoading(true);
     setErr("");
 
     try {
+      // Combine common issues and custom issue
+      const allIssues = [
+        ...form.commonIssues,
+        ...(form.customIssue ? [form.customIssue] : []),
+      ].filter(Boolean);
+
+      if (allIssues.length === 0) {
+        setErr("Please select or enter at least one issue");
+        setLoading(false);
+        return;
+      }
+
       const payload = {
         vehicle: {
+          type: form.vehicleType,
           regNo: form.regNo,
           model: form.model,
           ownerName: form.ownerName,
           contact: form.contact,
           kmReading: form.kmReading ? parseInt(form.kmReading) : 0,
         },
-        reportedIssues: form.issues
-          .split(",")
-          .map((s) => s.trim())
-          .filter(Boolean),
+        reportedIssues: allIssues,
       };
 
       const res = await api.post("/jobcards", payload);
@@ -94,6 +122,23 @@ export default function JobCardForm() {
                 Vehicle Information
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* Vehicle Type */}
+                <div>
+                  <label className="block text-sm font-semibold text-slate-700 mb-2">
+                    Vehicle Type *
+                  </label>
+                  <select
+                    name="vehicleType"
+                    value={form.vehicleType}
+                    onChange={handleChange}
+                    required
+                    className="input-field"
+                  >
+                    <option value="Car">Car</option>
+                    <option value="Bike">Bike</option>
+                  </select>
+                </div>
+
                 <div>
                   <label className="block text-sm font-semibold text-slate-700 mb-2">
                     Registration Number *
@@ -183,21 +228,58 @@ export default function JobCardForm() {
               <h2 className="text-xl font-bold text-slate-800 mb-4">
                 Reported Issues
               </h2>
+
+              {/* Common Issues Checkboxes */}
+              <div className="mb-6">
+                <label className="block text-sm font-semibold text-slate-700 mb-3">
+                  Common Issues (Select all that apply)
+                </label>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  {[
+                    "General Service",
+                    "Engine Making Noise",
+                    "Brake Pads Worn Out",
+                    "AC Not Working",
+                    "Oil Change Required",
+                    "Battery Issue",
+                    "Tire Replacement",
+                    "Suspension Problem",
+                  ].map((issue) => (
+                    <label
+                      key={issue}
+                      className="flex items-center p-3 border border-slate-200 rounded-lg hover:bg-blue-50 hover:border-blue-300 cursor-pointer transition-all"
+                    >
+                      <input
+                        type="checkbox"
+                        checked={form.commonIssues.includes(issue)}
+                        onChange={() => handleCheckboxChange(issue)}
+                        className="w-4 h-4 text-blue-600 border-slate-300 rounded focus:ring-blue-500"
+                      />
+                      <span className="ml-3 text-sm text-slate-700">{issue}</span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+
+              {/* Custom Issue Input */}
               <div>
                 <label className="block text-sm font-semibold text-slate-700 mb-2">
-                  Issues / Complaints *
+                  Other Issues (Optional)
                 </label>
                 <textarea
-                  name="issues"
-                  value={form.issues}
+                  name="customIssue"
+                  value={form.customIssue}
                   onChange={handleChange}
-                  required
-                  placeholder="AC not cooling, Engine making noise, Brake pads worn out"
-                  rows="4"
+                  placeholder="Describe any other issues not listed above..."
+                  rows="3"
                   className="input-field resize-none"
                 ></textarea>
                 <p className="text-xs text-slate-500 mt-2">
-                  Separate multiple issues with commas
+                  {form.commonIssues.length > 0 && (
+                    <span className="text-blue-600 font-semibold">
+                      {form.commonIssues.length} common issue(s) selected
+                    </span>
+                  )}
                 </p>
               </div>
             </div>

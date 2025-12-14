@@ -438,6 +438,39 @@ export default function BillingModal({ jobCard, isOpen, onClose, onUpdate, userR
                         </div>
                     )}
 
+
+                    {/* Payment Status Section - ALWAYS VISIBLE for authorized users */}
+                    {canUpdatePayment && (
+                        <div className="bg-emerald-50 p-4 rounded-lg border border-emerald-200">
+                            <h3 className="text-lg font-bold text-slate-800 mb-3">💳 Payment Status</h3>
+                            <div className="flex items-center gap-4">
+                                <div className="flex-1">
+                                    <label className="block text-sm font-semibold text-slate-700 mb-2">
+                                        Current Status
+                                    </label>
+                                    <select
+                                        value={jobCard.paymentStatus || "pending"}
+                                        onChange={(e) => handlePaymentStatusUpdate(e.target.value)}
+                                        className="input-field"
+                                    >
+                                        <option value="pending">🟠 Pending - Payment not received</option>
+                                        <option value="partial">🔵 Partial - Some amount received</option>
+                                        <option value="paid">🟢 Paid - Full amount settled</option>
+                                    </select>
+                                </div>
+                                <div className="flex-1">
+                                    <p className="text-sm text-slate-600 mb-1">Status Preview</p>
+                                    <span className={`inline-block px-4 py-2 rounded-lg text-sm font-bold w-full text-center ${(jobCard.paymentStatus || 'pending') === "paid" ? "bg-green-500 text-white" :
+                                            (jobCard.paymentStatus || 'pending') === "partial" ? "bg-blue-500 text-white" :
+                                                "bg-orange-400 text-white"
+                                        }`}>
+                                        {(jobCard.paymentStatus || 'PENDING').toUpperCase()}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
                     {/* Billing Summary */}
                     <div className="bg-gradient-to-br from-blue-50 to-indigo-100 p-6 rounded-xl border-2 border-blue-300">
                         <h3 className="text-lg font-bold text-slate-800 mb-4">📊 Billing Summary</h3>
